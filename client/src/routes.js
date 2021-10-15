@@ -22,6 +22,11 @@ import EditProduct from './components/dashboard/admin/products/addedit/edit';
 import UserCart from './components/dashboard/user/cart';
 import ManageSite from  './components/dashboard/admin/site';
 
+import { saveState } from "./components/product/prodNfo";
+
+import { store } from "./store/index";
+
+
 const Routes = (props) => {
   const [loading, setLoading] = useState(true);
   const users = useSelector(state => state.users);
@@ -30,7 +35,26 @@ const Routes = (props) => {
 
   const signOutUser = () => {
     dispatch(userSignOut())
+    saveState({
+      cart: [],
+    });
   }
+
+
+  store.subscribe(() => {
+    if (users.persistedState.length === 0 && users.cart.length === 0) {
+      return null;
+    }
+    if (users.cart.length > 0) {
+      const newCart = store.getState().users.cart;
+      const arr = [];
+      arr.push(newCart);
+      saveState({
+        cart: newCart,
+      });
+    }
+  });
+
 
 
   useEffect(() => {
